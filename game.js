@@ -4,9 +4,9 @@
 //
 
 KEY_CODES = {
+  13: 'enter',
   32: 'space',
   37: 'left',
-  38: 'up',
   39: 'right',
   40: 'down',
   70: 'f',
@@ -392,7 +392,7 @@ Ship = function () {
       this.vel.rot = 0;
     }
 
-    if (KEY_STATUS.up) {
+    if (KEY_STATUS.spacr) {
       var rad = ((this.rot-90) * Math.PI)/180;
       this.acc.x = 0.5 * Math.cos(rad);
       this.acc.y = 0.5 * Math.sin(rad);
@@ -406,7 +406,7 @@ Ship = function () {
     if (this.delayBeforeBullet > 0) {
       this.delayBeforeBullet -= delta;
     }
-    if (KEY_STATUS.space) {
+    if (KEY_STATUS.enter) {
       if (this.delayBeforeBullet <= 0) {
         this.delayBeforeBullet = 10;
         for (var i = 0; i < this.bullets.length; i++) {
@@ -919,7 +919,7 @@ Game = {
     waiting: function () {
       Text.renderText(ipad ? 'Touch Sreen to Start' : 'Press Space to Start', 36, Game.canvasWidth/2 - 270, Game.canvasHeight/2);
       if (KEY_STATUS.space || window.gameStart) {
-        KEY_STATUS.space = false; // hack so we don't shoot right away
+        KEY_STATUS.space = false; // hack so we don't move right away
         window.gameStart = false;
         this.state = 'start';
       }
