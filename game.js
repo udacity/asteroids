@@ -99,7 +99,16 @@ Sprite = function () {
   this.bridgesH = true;
   this.bridgesV = true;
 
+  // collidesWith determines the list of sprites that can interact with this sprite.
+  // Anything not in this list will just pass right through this sprite.
   this.collidesWith = [];
+
+  // getInterference returns a list of sprites that this sprite cannot spawn on top of.
+  // By default this is the same as collides with.  The exception is that ships can
+  // collide with coins, but they can also spawn on top of coins.
+  this.getInterference = function () {
+    return this.collidesWith;
+  }
 
   this.x     = 0;
   this.y     = 0;
@@ -331,7 +340,9 @@ Sprite = function () {
     return trans;
   };
   this.isClear = function () {
-    if (this.collidesWith.length == 0) return true;
+    interferesWith = this.getInterference();
+
+    if (interferesWith.length == 0) return true;
     var cn = this.currentNode;
     if (cn == null) {
       var gridx = Math.floor(this.x / GRID_SIZE);
@@ -340,15 +351,15 @@ Sprite = function () {
       gridy = (gridy >= this.grid[0].length) ? 0 : gridy;
       cn = this.grid[gridx][gridy];
     }
-    return (cn.isEmpty(this.collidesWith) &&
-            cn.north.isEmpty(this.collidesWith) &&
-            cn.south.isEmpty(this.collidesWith) &&
-            cn.east.isEmpty(this.collidesWith) &&
-            cn.west.isEmpty(this.collidesWith) &&
-            cn.north.east.isEmpty(this.collidesWith) &&
-            cn.north.west.isEmpty(this.collidesWith) &&
-            cn.south.east.isEmpty(this.collidesWith) &&
-            cn.south.west.isEmpty(this.collidesWith));
+    return (cn.isEmpty(interferesWith) &&
+            cn.north.isEmpty(interferesWith) &&
+            cn.south.isEmpty(interferesWith) &&
+            cn.east.isEmpty(interferesWith) &&
+            cn.west.isEmpty(interferesWith) &&
+            cn.north.east.isEmpty(interferesWith) &&
+            cn.north.west.isEmpty(interferesWith) &&
+            cn.south.east.isEmpty(interferesWith) &&
+            cn.south.west.isEmpty(interferesWith));
   };
   this.wrapPostMove = function () {
     if (this.x > Game.canvasWidth) {
@@ -382,6 +393,9 @@ Ship = function () {
   this.postMove = this.wrapPostMove;
 
   this.collidesWith = ["asteroid", "bigalien", "alienbullet", "coin"];
+  this.getInterference = function () {
+    return ["asteroid", "bigalien", "alienbullet"];
+  }
 
   this.shoot = function() {
     for (var i = 0; i < this.bullets.length; i++) {
