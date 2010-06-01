@@ -696,24 +696,29 @@ Coin = function () {
 
   this.collidesWith = ["ship"];
 
-  this.collision = function (other) {
-    console.log("got coin");
-  }
-
   this.newPosition = function () {
     this.x = Math.random() * Game.canvasWidth;
     this.y = Math.random() * Game.canvasHeight;
-    console.log('Position: (' + this.x + ', ' + this.y + ')');
   };
 
   this.newValue = function () {
-    this.value = (Math.random() * 10 + 1) * 100;
+    this.value = Math.floor(Math.random() * 10 + 1) * 10;
   }
 
   this.setup = function () {
     this.newPosition();
     this.newValue();
   };
+
+  this.collision = function (other) {
+    Game.score += this.value;
+    SFX.explosion();
+    this.visible = false;
+    Game.nextCoinTime = Date.now() + (10000 * Math.random());
+    this.newPosition();
+    this.newValue();
+  }
+
 }
 Coin.prototype = new Sprite();
 
@@ -1012,7 +1017,6 @@ Game = {
       if (!Game.coin.visible &&
           Date.now() > Game.nextCoinTime) {
         Game.coin.visible = true;
-        Game.nextCoinTime = Date.now() + (10000 * Math.random());
       }
     },
     new_level: function () {
