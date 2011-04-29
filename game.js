@@ -94,6 +94,8 @@ Sprite = function () {
 
   this.children = {};
 
+  this.color    = 'black';
+  this.solid    = false;
   this.visible  = false;
   this.reap     = false;
   this.bridgesH = true;
@@ -233,6 +235,9 @@ Sprite = function () {
       this.children[child].draw();
     }
 
+    this.context.strokeStyle = this.color;
+    this.context.fillStyle = this.color;
+
     this.context.beginPath();
 
     this.context.moveTo(this.points[0], this.points[1]);
@@ -244,6 +249,9 @@ Sprite = function () {
 
     this.context.closePath();
     this.context.stroke();
+    if (this.solid) {
+      this.context.fill();
+    }
   };
   this.findCollisionCanidates = function () {
     if (!this.visible || !this.currentNode) return [];
@@ -371,7 +379,12 @@ Ship = function () {
               0, -11,
               6,   7]);
 
+  this.color = 'navy';
+  this.solid = true;
+
   this.children.exhaust = new Sprite();
+  this.children.exhaust.solid = true;
+  this.children.exhaust.color = 'red';
   this.children.exhaust.init("exhaust",
                              [-3,  6,
                                0, 11,
@@ -647,6 +660,8 @@ Asteroid = function () {
               -4, -10,
               -4,  -5]);
 
+  this.color = 'lightgray';
+  this.solid = true;
   this.visible = true;
   this.scale = 6;
   this.postMove = this.wrapPostMove;
@@ -694,6 +709,7 @@ Explosion = function () {
   this.draw = function () {
     if (this.visible) {
       this.context.save();
+      this.context.strokeStyle = 'red';
       this.context.lineWidth = 1.0 / this.scale;
       this.context.beginPath();
       for (var i = 0; i < 5; i++) {
